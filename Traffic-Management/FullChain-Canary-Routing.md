@@ -413,7 +413,6 @@ kind: VirtualService
 metadata:
   name: vs-appa
 spec:
-
   http:
   - match:
       - gateways:
