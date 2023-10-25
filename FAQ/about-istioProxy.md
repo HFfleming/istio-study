@@ -2,7 +2,7 @@
 
 
 
-我们都知道集群中安装了istio后，只需要给 **namespace **打上`istio-injection=enabled` 这个标签，之后这个namespace下的所有pod都会注入边车容器istio-proxy，这也分两种情况，存量pod需要重启才能生效，新下发的pod会直接注入sidecar容器。
+我们都知道集群中安装了istio后，只需要给 namespace 打上`istio-injection=enabled` 这个标签，之后这个namespace下的所有pod都会注入边车容器istio-proxy，这也分两种情况，存量pod需要重启才能生效，新下发的pod会直接注入sidecar容器。
 
 
 
@@ -66,7 +66,7 @@
      ... ...
    ```
 
-   由上述配置可知，sidecar-injector 对标签匹配 `istio-injection : enabled` 的命名空间的Pod资源对象的创建生效。
+   由上述配置可知，webhook服务由istiod提供，在istio 1.5 版本之后sidecar-injector 被编译到istiod进程中。sidecar-injector 对标签匹配 `istio-injection : enabled` 的命名空间的Pod资源对象的创建生效。
 
 
 
@@ -103,11 +103,11 @@
              mountPath: /var/run/secrets/istio
            - name: istio-data
              mountPath: /var/lib/istio/data
-           - name: istio-envoy										 #Envoy的启动配置文件 envoy-rev0.json
+           - name: istio-envoy					#Envoy的启动配置文件 envoy-rev0.json
              mountPath: /etc/istio/proxy     
-           - name: istio-token											 # Envoy 访问istiod用的token
+           - name: istio-token					# Envoy 访问istiod用的token
              mountPath: /var/run/secrets/tokens 
-           - name: istio-podinfo										# 以文件形式保存 Pod自身服务的信息，包含annotations和labels文件，这两个文件将被pilot-agent读取
+           - name: istio-podinfo			 	# 以文件形式保存 Pod自身服务的信息，包含annotations和labels文件，这两个文件将被pilot-agent读取
              mountPath: /etc/istio/pod      
            - name: kube-api-access-xsnpl
              readOnly: true
@@ -335,9 +335,7 @@ istio中根据流量拦截的原理是iptables规则的配置。我们可以给�
 
 `-A ISTIO_OUTPUT -p tcp -m tcp --dport 8080 -j RETURN` `-A ISTIO_OUTPUT -d 172.16.2.0/24 -j RETURN`
 
-这些规则，如何下发下去呢？其实istio提供了基于podAnnotation配置的方式控制拦截行为
-
-<img src="./assets/image-20231025160345835.png" alt="image-20231025160345835" style="zoom:50%;" /> 
+这些规则，如何下发下去呢？其实istio提供了基于podAnnotation配置的方式控制拦截行为: https://istio.io/latest/docs/reference/config/annotations/
 
 测试一下:
 
