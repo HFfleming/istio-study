@@ -221,10 +221,8 @@
    -N ISTIO_IN_REDIRECT
    -N ISTIO_OUTPUT
    -N ISTIO_REDIRECT
-   -A PREROUTING -s 169.254.1.1/32 -i veth1 -m comment --comment "yangtse PREROUTING rules" -j RETURN
    -A PREROUTING -p tcp -j ISTIO_INBOUND
    -A OUTPUT -p tcp -j ISTIO_OUTPUT
-   -A POSTROUTING ! -s 172.16.4.8/32 -o eth0 -m comment --comment "yangtse SNAT rules" -j MASQUERADE
    -A ISTIO_INBOUND -p tcp -m tcp --dport 15008 -j RETURN
    -A ISTIO_INBOUND -p tcp -m tcp --dport 15090 -j RETURN
    -A ISTIO_INBOUND -p tcp -m tcp --dport 15021 -j RETURN
@@ -242,7 +240,7 @@
    -A ISTIO_OUTPUT -j ISTIO_REDIRECT
    -A ISTIO_REDIRECT -p tcp -j REDIRECT --to-ports 15001
    ```
-
+   
    `-P PREROUTING ACCEPT ` : 接受进入PREROUTING链的报文，其他链同理
 
    `-N ISTIO_INBOUND` : 声明一个自定义的链 ISTIO_INBOUND
